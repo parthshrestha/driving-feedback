@@ -1,0 +1,33 @@
+service: driving-feedback-api
+
+provider:
+  name: aws
+  runtime: python3.11
+  region: us-east-1
+  timeout: 10
+  environment:
+    MONGO_URI: ${.env:MONGO_URI}
+
+functions:
+  app:
+    handler: handler.handler
+    events:
+      - http:
+          path: /{proxy+}
+          method: ANY
+          cors: true
+
+plugins:
+  - serverless-dotenv-plugin
+  - serverless-python-requirements
+
+custom:
+  pythonRequirements:
+    dockerizePip: true
+
+package:
+  exclude:
+    - .env
+    - node_modules/**
+    - venv/**
+    - __pycache__/**
