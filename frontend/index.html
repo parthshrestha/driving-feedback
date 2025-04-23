@@ -4,45 +4,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Driving Feedback</title>
-  <style>
-    body {
-      margin: 0;
-      background-color: black;
-      color: white;
-      font-family: Arial, sans-serif;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-    }
-
-    h1 {
-      font-size: 5rem;
-    }
-
-    p {
-      font-size: 1.5rem;
-      opacity: 0.7;
-    }
-  </style>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <h1 id="rating">Loading...</h1>
   <p>Average Driving Rating</p>
 
-  <script>
-    async function fetchRating() {
-      try {
-        const res = await fetch("https://tbp98oea2e.execute-api.us-east-1.amazonaws.com/dev/rating");
-        const data = await res.json();
-        document.getElementById("rating").textContent = data.average_rating;
-      } catch (err) {
-        document.getElementById("rating").textContent = "N/A";
-      }
-    }
-
-    fetchRating();
-  </script>
+  <script src="script.js"></script>
 </body>
 </html>
