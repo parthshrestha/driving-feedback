@@ -2,12 +2,20 @@ from dotenv import load_dotenv
 
 from fastapi import FastAPI, Request, Form
 from fastapi.responses import PlainTextResponse
+from fastapi.middleware.cors import CORSMiddleware
 from datetime import timezone
 from datetime import datetime, timedelta
 from motor.motor_asyncio import AsyncIOMotorClient
 import os
 from fastapi.responses import JSONResponse
 app = FastAPI()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # or use ["https://domain.com"] in production
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 load_dotenv()
 
 # MongoDB Atlas connection URI (replace with your own URI securely later)
