@@ -1,93 +1,264 @@
+:root {
+  --base-clr: #111;
+  --hover-clr: #222;
+  --text-clr: #fff;
+  --accent-clr: #00ffb3;
+  --line-clr: #333;
+}
+
 body {
-    margin: 0;
-    background-color: black;
-    color: white;
-    font-family: Arial, sans-serif;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-  }
+  margin: 0;
+  min-height: 100dvh;
+  font-family: Arial, sans-serif;
+  background-color: black;
+}
 
-  h1 {
-    font-family: 'roboto', sans-serif;
-    font-size: 2rem;
-  }
+.layout {
+  display: flex;
+  min-height: 100vh;
+  position: relative;
+}
 
-  p {
-    font-size: 1.5rem;
-    opacity: 0.7;
-  }
-  .guage{
-    width: 100%;
-    max-width: 250px;
-  }
-  .guage_body{
-    width: 100%;
-    height: 0;
-    padding-bottom: 50%;
-    background: linear-gradient(
-      to right,
+.layout.collapsed #sidebar {
+  transform: translateX(-100%);
+}
+
+#sidebar {
+  background-color: var(--base-clr);
+  width: 250px;
+  padding: 1em;
+  transform: translateX(0);
+  transition: transform 0.3s ease;
+  overflow: hidden;
+  flex-shrink: 0;
+  z-index: 100;
+}
+
+.sidebar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1em;
+}
+
+.logo {
+  font-weight: bold;
+  color: var(--accent-clr);
+  font-size: 1.2rem;
+}
+
+#sidebar ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+#sidebar ul li a,
+#sidebar ul li .dropdown-btn {
+  display: flex;
+  align-items: center;
+  gap: 1em;
+  color: var(--text-clr);
+  padding: 0.75em;
+  border-radius: 0.5em;
+  text-decoration: none;
+  transition: background-color 0.2s ease;
+}
+
+#sidebar ul li a:hover,
+#sidebar ul li a.active,
+#sidebar .dropdown-btn:hover {
+  background-color: var(--hover-clr);
+  color: var(--accent-clr);
+}
+
+#sidebar svg {
+  flex-shrink: 0;
+}
+
+.toggle-btn {
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+}
+
+/* MAIN SECTION */
+main {
+  flex: 1;
+  background-color: black;
+  color: white;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  transition: margin-left 0.3s ease;
+}
+
+/* GAUGE STYLES */
+.guage {
+  width: 100%;
+  max-width: 250px;
+}
+.guage_body {
+  width: 100%;
+  height: 0;
+  padding-bottom: 50%;
+  background: linear-gradient(
+    to right,
     red 0%,
     red 40%,
     yellow 55%,
     yellow 80%,
-    green 85%);
-    position: relative;
-    border-top-left-radius: 100% 200%;
-    border-top-right-radius: 100% 200%;
-    overflow: hidden;
-  }
-  .guage_fill{
-    position: absolute;
-    top: 100%;
-    left: 0;
-    width: inherit;
-    height: 100%;
-    background: white;
-    transform-origin: center top;
-    transform: rotate(0turn);
-    transition: transform 0.2s ease-out;
-  }
-  .guage_cover{
-    width: 75%;
-    height: 150%;
-    background: black;
-    border-radius: 50%;
-    position: absolute;
-    top: 25%;
-    left: 50%;
-    transform: translateX(-50%);
-
-    /* Text */
+    green 85%
+  );
+  position: relative;
+  border-top-left-radius: 100% 200%;
+  border-top-right-radius: 100% 200%;
+  overflow: hidden;
+}
+.guage_fill {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: inherit;
+  height: 100%;
+  background: white;
+  transform-origin: center top;
+  transform: rotate(0turn);
+  transition: transform 0.2s ease-out;
+}
+.guage_cover {
+  width: 75%;
+  height: 150%;
+  background: black;
+  border-radius: 50%;
+  position: absolute;
+  top: 25%;
+  left: 50%;
+  transform: translateX(-50%);
   display: flex;
   align-items: center;
   justify-content: center;
   padding-bottom: 25%;
   box-sizing: border-box;
+}
 
-  }
-  .feedback-container {
-    margin-top: 2rem;
-    display: flex;
+/* FEEDBACK SECTION */
+.feedback-container {
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: hidden;
+  height: 15rem;
+  position: relative;
+}
+
+.feedback-message {
+  font-size: 1.2rem;
+  opacity: 1;
+  transform: translateY(0);
+  transition: transform 0.5s ease, opacity 0.5s ease;
+  white-space: nowrap;
+  margin: 0.2rem 0;
+}
+
+.stars {
+  color: gold;
+  font-size: 1.4rem;
+  letter-spacing: 0.05rem;
+  margin-right: 0.4rem;
+}
+
+.comment {
+  color: white;
+}
+
+/* RESPONSIVE SIDEBAR */
+@media (max-width: 768px) {
+  .layout {
     flex-direction: column;
-    align-items: center;
-    overflow: hidden;
-    height: 15rem; /* Adjust depending how many messages you want visible at a time */
-    position: relative;
   }
-  
-  .feedback-message {
-    font-size: 1.2rem;
-    opacity: 1;
-    transform: translateY(0);
-    transition: transform 0.5s ease, opacity 0.5s ease;
-    white-space: nowrap;
-    margin: 0.2rem 0;
+
+  #sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    z-index: 100;
+    transform: translateX(-100%);
   }
-  .stars {
-    color: gold;
-    font-size: 1.4rem; /* slightly bigger if you want */
+
+  .layout.collapsed #sidebar {
+    transform: translateX(0);
   }
- 
+
+  .layout.collapsed::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 50;
+  }
+
+  .layout.collapsed main {
+    pointer-events: none;
+  }
+}
+
+/* TYPOGRAPHY */
+h1 {
+  font-family: 'Roboto', sans-serif;
+  font-size: 2rem;
+}
+
+p {
+  font-size: 1.5rem;
+  opacity: 0.7;
+}
+.toggle-btn {
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  width: 28px;
+  height: 22px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background: none;
+  border: none;
+  cursor: pointer;
+  z-index: 200;
+  padding: 0;
+}
+
+.toggle-btn .bar {
+  width: 100%;
+  height: 3px;
+  background-color: white;
+  transition: all 0.3s ease;
+  border-radius: 2px;
+}
+
+/* Animate to X */
+.layout:not(.collapsed) .toggle-btn .bar:nth-child(1) {
+  transform: rotate(45deg) translate(5px, 5px);
+}
+
+.layout:not(.collapsed) .toggle-btn .bar:nth-child(2) {
+  opacity: 0;
+}
+
+.layout:not(.collapsed) .toggle-btn .bar:nth-child(3) {
+  transform: rotate(-45deg) translate(5px, -5px);
+}
+.logo {
+  font-weight: bold;
+  color: var(--accent-clr);
+  font-size: 1.2rem;
+  margin-left: 3rem; 
+}
