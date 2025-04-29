@@ -86,4 +86,8 @@ body {
     white-space: nowrap;
     margin: 0.2rem 0;
   }
+  .stars {
+    color: gold;
+    font-size: 1.4rem; /* slightly bigger if you want */
+  }
  

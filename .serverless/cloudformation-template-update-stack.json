@@ -162,7 +162,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/driving-feedback-api/dev/1745897397557-2025-04-29T03:29:57.557Z/driving-feedback-api.zip"
+          "S3Key": "serverless/driving-feedback-api/dev/1745903397266-2025-04-29T05:09:57.266Z/driving-feedback-api.zip"
         },
         "Handler": "handler.handler",
         "Runtime": "python3.11",
@@ -185,14 +185,14 @@
         "AppLogGroup"
       ]
     },
-    "AppLambdaVersionfJOkqyEPmagXo6JUyxjBR6VYf70IkGHlnWpoDS2DriQ": {
+    "AppLambdaVersiontHXTAE4k1piovkNNvCmwdTssXMwYEdbybf9J4iT1k": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "AppLambdaFunction"
         },
-        "CodeSha256": "6Am8wP0EGIJBNvDhdEh5ciDaj2h+OREieQO2yWK3Ezo="
+        "CodeSha256": "h+lcYxHb/cmq7REAkrX+f4miJdv1ui/29eD2uWFmGH4="
       }
     },
     "ApiGatewayRestApi": {
@@ -313,7 +313,7 @@
         "AppLambdaPermissionApiGateway"
       ]
     },
-    "ApiGatewayDeployment1745897378237": {
+    "ApiGatewayDeployment1745903379180": {
       "Type": "AWS::ApiGateway::Deployment",
       "Properties": {
         "RestApiId": {
@@ -376,7 +376,7 @@
     "AppLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "AppLambdaVersionfJOkqyEPmagXo6JUyxjBR6VYf70IkGHlnWpoDS2DriQ"
+        "Ref": "AppLambdaVersiontHXTAE4k1piovkNNvCmwdTssXMwYEdbybf9J4iT1k"
       },
       "Export": {
         "Name": "sls-driving-feedback-api-dev-AppLambdaFunctionQualifiedArn"

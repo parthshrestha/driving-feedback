@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function () {
+
 
   const guageElement = document.querySelector(".guage");
   let currentIndex = 0;
@@ -43,20 +43,25 @@ document.addEventListener('DOMContentLoaded', function () {
 
   function updateFeedbackMessages() {
     const feedbackElements = document.querySelectorAll('.feedback-message');
-
+  
     feedbackElements.forEach((element, i) => {
       const feedbackItem = feedbackMessages[(currentIndex + i) % feedbackMessages.length];
-
+  
       if (feedbackItem) {
-        const stars = "⭐".repeat(Math.round(feedbackItem.rating)); 
-        element.textContent = `${stars} ${feedbackItem.comment}`;
+        const ratingOutOf5 = Math.round(feedbackItem.rating / 2);
+        const fullStars = "★".repeat(ratingOutOf5);
+        const emptyStars = "☆".repeat(5 - ratingOutOf5);
+        const stars = `${fullStars}${emptyStars}`;
+  
+        element.innerHTML = `<span class="stars">${stars}</span> <span class="comment">${feedbackItem.comment}</span>`;
       } else {
         element.textContent = "";
       }
-
+  
       element.style.opacity = 1 - (i * 0.2);
       element.style.transform = `translateY(${i * 30}px)`;
     });
   }
+  
 
-});
+

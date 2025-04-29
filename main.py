@@ -113,15 +113,22 @@ async def get_rating():
         result = agg_result[0]
         average_rating = round(result["average"], 2)
         total_feedback = result["count"]
-    # Step 2: Get top 5 recent feedback comments
+
+    # Get top feedback (fix: get full docs, not just comments!)
     feedback_cursor = collection.find(
-        {"comment": {"$ne": None}}  # Only include documents with non-empty comment
-    ).sort("timestamp", -1).limit(5)
-    feedback_docs = await feedback_cursor.to_list(length=5)
+        {"comment": {"$ne": None}}
+    ).sort("timestamp", -1).limit(10)
+    feedback_docs = await feedback_cursor.to_list(length=10)
 
-    feedback_messages = [doc["comment"] for doc in feedback_docs if "comment" in doc]
+    # Return both rating and comment properly
+    feedback_messages = [
+        {
+            "rating": doc.get("rating", 0),
+            "comment": doc.get("comment", "")
+        }
+        for doc in feedback_docs if "comment" in doc
+    ]
 
-    # Step 3: Return everything
     return {
         "average_rating": average_rating,
         "total_feedback": total_feedback,
