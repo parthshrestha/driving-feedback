@@ -73,33 +73,17 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0.5rem;
+    overflow: hidden;
+    height: 15rem; /* Adjust depending how many messages you want visible at a time */
+    position: relative;
   }
+  
   .feedback-message {
     font-size: 1.2rem;
     opacity: 1;
-    transform: scale(1);
-    transition: all 0.5s ease;
+    transform: translateY(0);
+    transition: transform 0.5s ease, opacity 0.5s ease;
     white-space: nowrap;
+    margin: 0.2rem 0;
   }
-  /* Optional: create distance-fading effect manually */
-.feedback-container .feedback-message:nth-child(2) {
-  opacity: 0.8;
-  transform: scale(0.95);
-}
-
-.feedback-container .feedback-message:nth-child(3) {
-  opacity: 0.6;
-  transform: scale(0.9);
-}
-
-.feedback-container .feedback-message:nth-child(4) {
-  opacity: 0.4;
-  transform: scale(0.85);
-}
-
-.feedback-container .feedback-message:nth-child(5) {
-  opacity: 0.2;
-  transform: scale(0.8);
-}
-  
+ 
