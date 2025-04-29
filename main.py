@@ -100,17 +100,30 @@ async def receive_sms(
 
 @app.get("/rating", response_class=JSONResponse)
 async def get_rating():
+    # calculate average rating
     pipeline = [
         {"$group": {"_id": None, "average": {"$avg": "$rating"}, "count": {"$sum": 1}}}
     ]
     agg_result = await collection.aggregate(pipeline).to_list(length=1)
 
     if not agg_result:
-        return {"average": 0, "count": 0}
+        average_rating = 0
+        total_feedback = 0
+    else:
+        result = agg_result[0]
+        average_rating = round(result["average"], 2)
+        total_feedback = result["count"]
+    # Step 2: Get top 5 recent feedback comments
+    feedback_cursor = collection.find(
+        {"comment": {"$ne": None}}  # Only include documents with non-empty comment
+    ).sort("timestamp", -1).limit(5)
+    feedback_docs = await feedback_cursor.to_list(length=5)
 
-    result = agg_result[0]
+    feedback_messages = [doc["comment"] for doc in feedback_docs if "comment" in doc]
 
+    # Step 3: Return everything
     return {
-        "average_rating": round(result["average"], 2),
-        "total_feedback": result["count"]
+        "average_rating": average_rating,
+        "total_feedback": total_feedback,
+        "feedback": feedback_messages
     }
