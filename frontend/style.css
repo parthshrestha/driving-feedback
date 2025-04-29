@@ -1,3 +1,4 @@
+
 :root {
   --base-clr: #111;
   --hover-clr: #222;
@@ -24,14 +25,18 @@ body {
 }
 
 #sidebar {
-  background-color: var(--base-clr);
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
   width: 250px;
-  padding: 1em;
+  background-color: var(--base-clr);
+  padding: 1em 1.5em;
   transform: translateX(0);
   transition: transform 0.3s ease;
   overflow: hidden;
-  flex-shrink: 0;
   z-index: 100;
+  flex-shrink: 0;
 }
 
 .sidebar-header {
@@ -44,7 +49,8 @@ body {
 .logo {
   font-weight: bold;
   color: var(--accent-clr);
-  font-size: 1.2rem;
+  font-size: 1.4rem;
+  margin-bottom: 1em;
 }
 
 #sidebar ul {
@@ -53,16 +59,22 @@ body {
   margin: 0;
 }
 
+#sidebar ul li {
+  margin: 0.25em 0;
+}
+
 #sidebar ul li a,
 #sidebar ul li .dropdown-btn {
+  all: unset;
   display: flex;
   align-items: center;
   gap: 1em;
   color: var(--text-clr);
   padding: 0.75em;
   border-radius: 0.5em;
-  text-decoration: none;
+  background-color: transparent;
   transition: background-color 0.2s ease;
+  cursor: pointer;
 }
 
 #sidebar ul li a:hover,
@@ -72,16 +84,40 @@ body {
   color: var(--accent-clr);
 }
 
-#sidebar svg {
-  flex-shrink: 0;
+.toggle-btn {
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  width: 28px;
+  height: 22px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background: none;
+  border: none;
+  cursor: pointer;
+  z-index: 200;
+  padding: 0;
 }
 
-.toggle-btn {
-  background: transparent;
-  border: none;
-  padding: 0;
-  margin: 0;
-  cursor: pointer;
+.toggle-btn .bar {
+  width: 100%;
+  height: 3px;
+  background-color: white;
+  transition: all 0.3s ease;
+  border-radius: 2px;
+}
+
+.layout:not(.collapsed) .toggle-btn .bar:nth-child(1) {
+  transform: rotate(45deg) translate(5px, 5px);
+}
+
+.layout:not(.collapsed) .toggle-btn .bar:nth-child(2) {
+  opacity: 0;
+}
+
+.layout:not(.collapsed) .toggle-btn .bar:nth-child(3) {
+  transform: rotate(-45deg) translate(5px, -5px);
 }
 
 /* MAIN SECTION */
@@ -180,17 +216,16 @@ main {
 
 /* RESPONSIVE SIDEBAR */
 @media (max-width: 768px) {
-  .layout {
-    flex-direction: column;
+  body {
+    font-size: 16px;
   }
 
-  #sidebar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    height: 100%;
-    z-index: 100;
-    transform: translateX(-100%);
+  main {
+    padding: 1rem;
+  }
+
+  .layout {
+    flex-direction: column;
   }
 
   .layout.collapsed #sidebar {
@@ -219,46 +254,4 @@ h1 {
 p {
   font-size: 1.5rem;
   opacity: 0.7;
-}
-.toggle-btn {
-  position: fixed;
-  top: 1rem;
-  left: 1rem;
-  width: 28px;
-  height: 22px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  background: none;
-  border: none;
-  cursor: pointer;
-  z-index: 200;
-  padding: 0;
-}
-
-.toggle-btn .bar {
-  width: 100%;
-  height: 3px;
-  background-color: white;
-  transition: all 0.3s ease;
-  border-radius: 2px;
-}
-
-/* Animate to X */
-.layout:not(.collapsed) .toggle-btn .bar:nth-child(1) {
-  transform: rotate(45deg) translate(5px, 5px);
-}
-
-.layout:not(.collapsed) .toggle-btn .bar:nth-child(2) {
-  opacity: 0;
-}
-
-.layout:not(.collapsed) .toggle-btn .bar:nth-child(3) {
-  transform: rotate(-45deg) translate(5px, -5px);
-}
-.logo {
-  font-weight: bold;
-  color: var(--accent-clr);
-  font-size: 1.2rem;
-  margin-left: 3rem; 
 }
