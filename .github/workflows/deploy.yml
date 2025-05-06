@@ -39,6 +39,9 @@ jobs:
       - name: Install Serverless Framework v3
         run: npm install -g serverless@3
 
+      - name: Install Serverless plugins
+        run: npm install --save-dev serverless-dotenv-plugin serverless-python-requirements
+
       - name: Deploy backend with Serverless
         run: npx serverless deploy
 
