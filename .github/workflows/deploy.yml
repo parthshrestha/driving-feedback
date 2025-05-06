@@ -36,8 +36,8 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Install Serverless Framework
-        run: npm install -g serverless
+      - name: Install Serverless Framework v3
+        run: npm install -g serverless@3
 
       - name: Deploy backend with Serverless
         run: npx serverless deploy
