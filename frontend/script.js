@@ -2,7 +2,7 @@ const guageElement = document.querySelector(".guage");
 let currentIndex = 0;
 let feedbackMessages = [];
 
-fetch("https://nayadriver.com/rating.json", {
+fetch("http://nayadriver.com.s3-website-us-east-1.amazonaws.com/rating.json", {
   cache: "force-cache"
 })
   .then((res) => res.json())
