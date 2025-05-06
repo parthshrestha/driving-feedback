@@ -6,7 +6,7 @@ provider:
   region: us-east-1
   timeout: 10
   environment:
-    MONGO_URI: ${env:MONGO_URI}
+    MONGO_URI: ${{ secrets.MONGO_URI }}
 
 functions:
   app:
