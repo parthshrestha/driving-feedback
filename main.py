@@ -1,36 +1,34 @@
 from dotenv import load_dotenv
-
 from fastapi import FastAPI, Request, Form
-from fastapi.responses import PlainTextResponse
+from fastapi.responses import PlainTextResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
-from datetime import timezone
-from datetime import datetime, timedelta
+from datetime import timezone, datetime, timedelta
 from motor.motor_asyncio import AsyncIOMotorClient
 import os
-from fastapi.responses import JSONResponse
+
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # or use ["https://domain.com"] in production
+    allow_origins=["https://nayadriver.com", "http://localhost:3000"],  # restrict to your domain in production
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 load_dotenv()
 
-# MongoDB Atlas connection URI (replace with your own URI securely later)
 MONGO_URI = os.getenv("MONGO_URI")
 if not MONGO_URI:
     raise ValueError("MONGO_URI not set. Please check your .env file or environment variables.")
-client = AsyncIOMotorClient(MONGO_URI)
-db = client.drivingFeedback        # DB name in mongo
-collection = db.submissions        # Collection name
 
-# In-memory session store
+client = AsyncIOMotorClient(MONGO_URI)
+db = client.drivingFeedback
+collection = db.submissions
+blocked_collection = db.blocked_numbers  # New collection for blocked users
+
 sessions = {}
-# Global in-memory store for rate limiting
-last_feedback_time = {}  # Format: { phone_number: datetime }
-COOLDOWN_PERIOD = timedelta(minutes=120)  # cooldown period in minutes for rate limiting
+last_feedback_time = {}
+COOLDOWN_PERIOD = timedelta(minutes=120)
 
 @app.post("/sms", response_class=PlainTextResponse)
 async def receive_sms(
@@ -40,17 +38,22 @@ async def receive_sms(
 ):
     user_number = From
     message = Body.strip().lower()
+    now = datetime.now(timezone.utc)
+
+    # 🛑 Blocked user check
+    if await blocked_collection.find_one({"phone": user_number}):
+        return "Access denied. You've already submitted feedback."
 
     session = sessions.get(user_number, {"step": 0, "attempts": 0})
     step = session["step"]
-    now = datetime.now(timezone.utc)
+
     if step > 0:
         if user_number in last_feedback_time:
             elapsed = now - last_feedback_time[user_number]
             if elapsed < COOLDOWN_PERIOD:
-                return "Please wait between feedback submissions." 
+                return "Please wait between feedback submissions."
 
-    if step == 0:# start of conversation
+    if step == 0:
         if "1234" in message:
             session["step"] = 1
             session["attempts"] = 0
@@ -59,7 +62,7 @@ async def receive_sms(
         else:
             return "To start, please text '1234'."
 
-    elif step == 1:# get rating
+    elif step == 1:
         try:
             rating = int(message)
             if 1 <= rating <= 10:
@@ -83,9 +86,9 @@ async def receive_sms(
         session["message"] = message
         session["step"] = 3
         sessions[user_number] = session
-        last_feedback_time[user_number] = datetime.now(timezone.utc)
+        last_feedback_time[user_number] = now
 
-        feedback_doc = {# mongo doc to store
+        feedback_doc = {
             "phone": user_number,
             "rating": session.get("rating"),
             "comment": message,
@@ -93,14 +96,18 @@ async def receive_sms(
         }
 
         await collection.insert_one(feedback_doc)
+
+        # ⛔️ Permanently block this user now
+        await blocked_collection.insert_one({"phone": user_number})
+
         return "Thanks for the feedback!"
 
     else:
-        return "You’ve already submitted feedback recently. Thanks again!"
+        return "You've already submitted feedback. Thanks again!"
+
 
 @app.get("/rating", response_class=JSONResponse)
 async def get_rating():
-    # calculate average rating
     pipeline = [
         {"$group": {"_id": None, "average": {"$avg": "$rating"}, "count": {"$sum": 1}}}
     ]
@@ -114,13 +121,9 @@ async def get_rating():
         average_rating = round(result["average"], 2)
         total_feedback = result["count"]
 
-    # Get top feedback (fix: get full docs, not just comments!)
-    feedback_cursor = collection.find(
-        {"comment": {"$ne": None}}
-    ).sort("timestamp", -1).limit(10)
+    feedback_cursor = collection.find({"comment": {"$ne": None}}).sort("timestamp", -1).limit(10)
     feedback_docs = await feedback_cursor.to_list(length=10)
 
-    # Return both rating and comment properly
     feedback_messages = [
         {
             "rating": doc.get("rating", 0),
