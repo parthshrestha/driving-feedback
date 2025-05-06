@@ -1,0 +1,46 @@
+{
+  "average_rating": 6.5,
+  "total_feedback": 14,
+  "feedback": [
+    {
+      "rating": 9,
+      "comment": "driver was attentive of the situation"
+    },
+    {
+      "rating": 10,
+      "comment": "almost killed me"
+    },
+    {
+      "rating": 10,
+      "comment": "no"
+    },
+    {
+      "rating": 8,
+      "comment": "no i don't"
+    },
+    {
+      "rating": 9,
+      "comment": "driving fast"
+    },
+    {
+      "rating": 10,
+      "comment": "awesome job"
+    },
+    {
+      "rating": 1,
+      "comment": "you suck"
+    },
+    {
+      "rating": 1,
+      "comment": "ya i crashed"
+    },
+    {
+      "rating": 10,
+      "comment": "good job"
+    },
+    {
+      "rating": 10,
+      "comment": "yea i got pulled over for racing"
+    }
+  ]
+}

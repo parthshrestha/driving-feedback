@@ -9,7 +9,7 @@ import os
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://nayadriver.com", "http://localhost:3000"],  # restrict to your domain in production
+    allow_origins=["http://nayadriver.com","https://nayadriver.com", "http://localhost:3000"],  # restrict to your domain in production
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -40,18 +40,13 @@ async def receive_sms(
     message = Body.strip().lower()
     now = datetime.now(timezone.utc)
 
-    # 🛑 Blocked user check
+    # Silent block: don't respond to already submitted numbers
     if await blocked_collection.find_one({"phone": user_number}):
-        return "Access denied. You've already submitted feedback."
+        print(f"Blocked user {user_number} tried to message again.")
+        return PlainTextResponse(content="", status_code=200)
 
     session = sessions.get(user_number, {"step": 0, "attempts": 0})
     step = session["step"]
-
-    if step > 0:
-        if user_number in last_feedback_time:
-            elapsed = now - last_feedback_time[user_number]
-            if elapsed < COOLDOWN_PERIOD:
-                return "Please wait between feedback submissions."
 
     if step == 0:
         if "1234" in message:
@@ -86,7 +81,6 @@ async def receive_sms(
         session["message"] = message
         session["step"] = 3
         sessions[user_number] = session
-        last_feedback_time[user_number] = now
 
         feedback_doc = {
             "phone": user_number,
@@ -96,15 +90,12 @@ async def receive_sms(
         }
 
         await collection.insert_one(feedback_doc)
-
-        # ⛔️ Permanently block this user now
         await blocked_collection.insert_one({"phone": user_number})
-
         return "Thanks for the feedback!"
 
     else:
-        return "You've already submitted feedback. Thanks again!"
-
+        # fallback — shouldn't happen due to block logic
+        return PlainTextResponse(content="", status_code=200)
 
 @app.get("/rating", response_class=JSONResponse)
 async def get_rating():

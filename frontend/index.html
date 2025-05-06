@@ -60,7 +60,7 @@
         </div>
       </div>
     </div>
-    <p>Driver's Rating</p>
+    <p>Driver's Monthly Rating</p>
     <div class="feedback-container">
       <div class="feedback-message">Loading feedback...</div>
       <div class="feedback-message"></div>
@@ -84,9 +84,8 @@
       });
     });
 
-    const version = Date.now();
     const script = document.createElement('script');
-    script.src = `script.js?v=${version}`;
+    script.src = "script.js?v=1.0.1";
     document.body.appendChild(script);
   </script>
 </body>
