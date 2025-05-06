@@ -1,4 +1,4 @@
-name: Deploy to AWS
+name: Deploy to S3
 
 on:
   push:
@@ -9,48 +9,16 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
 
-    env:
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      MONGO_URI: ${{ secrets.MONGO_URI }}
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
+      - name: Set up AWS CLI
+        uses: aws-actions/configure-aws-credentials@v2
         with:
-          python-version: '3.11'
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
 
-      - name: Install Python dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-
-      - name: Update rating.json from FastAPI
-        run: python update_rating_json.py
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '20'
-
-      - name: Install Serverless Framework v3
-        run: npm install -g serverless@3
-
-      - name: Install Serverless plugins
-        run: npm install --save-dev serverless-dotenv-plugin serverless-python-requirements
-
-      - name: Deploy backend with Serverless
-        run: npx serverless deploy
-
-      - name: Sync frontend except rating.json
-        run: |
-          aws s3 sync frontend/ s3://nayadriver.com --delete --exclude "rating.json"
-
-      - name: Upload rating.json with cache control
-        run: |
-          aws s3 cp frontend/rating.json s3://nayadriver.com/rating.json \
-            --cache-control "max-age=604800" \
-            --content-type "application/json"
+      - name: Deploy frontend to S3
+        run: aws s3 sync frontend/ s3://nayadriver.com --delete
